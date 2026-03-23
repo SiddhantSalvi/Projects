@@ -1,0 +1,6 @@
+# Exclude pycache
+__pycache__/
+*.pyc
+
+flickr30k/
+checkpoints/
