@@ -94,3 +94,16 @@ def one_step_sampling_cfg(model, vae, text_encoder, prompt, device, steps=20, cf
         pred_image = vae.decode_latents(x_t)
         return pred_image
 
+def one_step_sampling_no_cfg(model, vae, text_encoder, prompt, device, steps=20):
+    model.eval()
+    with torch.no_grad():
+        x_t = torch.randn(1,4,32,32).to(device)
+        encoded_text = text_encoder(prompt)
+        encoded_text = encoded_text.to(device)
+        dt = 1.0/steps
+        for i in range(steps):
+            t = torch.ones(1, device=device) * (i / steps)
+            pred_v = model(x_t, t, encoded_text)
+            x_t = x_t + dt * pred_v
+        pred_image = vae.decode_latents(x_t)
+        return pred_image
